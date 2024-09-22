@@ -7,15 +7,16 @@ import {
     Post,
     Put,
     Query,
-    UseGuards,
+    // UseGuards,
     UseInterceptors,
     UsePipes,
 } from '@nestjs/common'
 import { StockService } from '../services/stock.service'
 import { z } from 'zod'
 import { ZodValidationPipe } from 'src/shared/filters/pipe/zod-validation.pipe'
-import { AuthGuard } from 'src/shared/guards/auth.guard'
+// import { AuthGuard } from 'src/shared/guards/auth.guard'
 import { LoggingInterceptor } from 'src/shared/interceptors/logging.interceptor'
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger'
 
 const createStockSchema = z.object({
     name: z.string(),
@@ -30,6 +31,7 @@ const updateStockSchema = z.object({
 type CreateStock = z.infer<typeof createStockSchema>
 type UpdateStock = z.infer<typeof updateStockSchema>
 
+@ApiTags('stock')
 @UseInterceptors(LoggingInterceptor)
 @Controller('stock')
 export class StockController {
@@ -48,7 +50,8 @@ export class StockController {
         return this.stockService.getStock(productId)
     }
 
-    @UseGuards(AuthGuard)
+    @ApiBearerAuth()
+    // @UseGuards(AuthGuard)
     @UsePipes(new ZodValidationPipe(createStockSchema))
     @Post()
     async createStock(@Body() { name, quantity, relationId }: CreateStock) {
