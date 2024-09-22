@@ -6,5 +6,5 @@ export function setupRedoc(app: any) {
         version: '1.0',
         specUrl: '/api-json',
     }
-    app.use('/redoc', redoc(redocOptions))
+    app.use('/docs', redoc(redocOptions))
 }
